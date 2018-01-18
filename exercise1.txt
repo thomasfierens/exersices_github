@@ -1,0 +1,15 @@
+mkdir exercises
+cd exercises/
+git init
+git config --global user.name "thomasfierens"
+git config --global user.email "thomas.fierens@student.howest.be"
+echo "# exersices_github" >> README.md
+git add README.md 
+git commit -m "first commit"
+git remote add origin https://github.com/thomasfierens/exersices_github.git
+git push -u origin master
+touch exercise1.txt
+*write used commands*
+git add exercise1.txt 
+git commit -m "add exercise1.txt"
+git push
