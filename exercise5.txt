@@ -1,0 +1,141 @@
+1) select guestname,guestaddress from guest where guestaddress like "%London%" order by guestname;
++--------------+--------------------+
+| guestname    | guestaddress       |
++--------------+--------------------+
+| John Kay     | 56 High St, London |
+| Mike Ritchie | 18 Tain St, London |
++--------------+--------------------+
+2) select type,price from room where (type = "double" or type = "family") and price < 40 order by price;
++--------+-------+
+| type   | price |
++--------+-------+
+| double | 15.00 |
+| double | 29.00 |
+| double | 30.00 |
+| family | 35.00 |
+| family | 39.00 |
++--------+-------+
+3) select * from booking where dateto is NULL;
++---------+---------+------------+--------+--------+
+| hotelno | guestno | datefrom   | dateto | roomno |
++---------+---------+------------+--------+--------+
+| ch01    |   10006 | 2004-04-21 | NULL   |   1101 |
+| dc01    |   10003 | 2004-05-20 | NULL   |   1001 |
+| fb01    |   10001 | 2004-05-01 | NULL   |    701 |
++---------+---------+------------+--------+--------+
+4) select avg(price) from room;
++------------+
+| avg(price) |
++------------+
+|  35.748333 |
++------------+
+5) select type,sum(price) from room where type = "double";
++--------+------------+
+| type   | sum(price) |
++--------+------------+
+| double |     160.00 |
++--------+------------+
+6) select * from booking where month(datefrom) = 8 and dateto is not NULL;
+Empty set (0.01 sec)
+OR
+select * from booking where month(datefrom) = 8 and month(datefrom) = 8 and dateto is not NULL;
+Empty set (0.01 sec)
+OR
+select * from booking where datefrom like "2004-08%" and dateto IS NOT NULL;
+Empty set, 1 warning (0.00 sec)
+7) select hotelname, type, price  from hotel join room on hotel.hotelno = room.hotelno where hotelname = "The Tower Hotel";
++-----------------+--------+-------+
+| hotelname       | type   | price |
++-----------------+--------+-------+
+| The Tower Hotel | single | 19.00 |
+| The Tower Hotel | double | 29.00 |
+| The Tower Hotel | family | 39.00 |
++-----------------+--------+-------+
+8) select guest.guestno,guestname, hotelname from guest join booking on guest.guestno = booking.guestno join hotel on booking.hotelno = hotel.hotelno where hotelname = "The Tower Hotel";
++---------+--------------+-----------------+
+| guestno | guestname    | hotelname       |
++---------+--------------+-----------------+
+|   10001 | John Kay     | The Tower Hotel |
+|   10001 | John Kay     | The Tower Hotel |
+|   10002 | Mike Ritchie | The Tower Hotel |
+|   10004 | Joe Keogh    | The Tower Hotel |
+|   10005 | Carol Farrel | The Tower Hotel |
++---------+--------------+-----------------+
+9) select hotel.hotelname, room.roomno,type,price, guestname from hotel join room on hotel.hotelno = room.hotelno join booking on hotel.hotelno = booking.hotelno join guest on booking.guestno = guest.guestno where hotelname = "The Tower Hotel";
++-----------------+--------+--------+-------+--------------+
+| hotelname       | roomno | type   | price | guestname    |
++-----------------+--------+--------+-------+--------------+
+| The Tower Hotel |    501 | single | 19.00 | John Kay     |
+| The Tower Hotel |    501 | single | 19.00 | John Kay     |
+| The Tower Hotel |    501 | single | 19.00 | Mike Ritchie |
+| The Tower Hotel |    501 | single | 19.00 | Joe Keogh    |
+| The Tower Hotel |    501 | single | 19.00 | Carol Farrel |
+| The Tower Hotel |    601 | double | 29.00 | John Kay     |
+| The Tower Hotel |    601 | double | 29.00 | John Kay     |
+| The Tower Hotel |    601 | double | 29.00 | Mike Ritchie |
+| The Tower Hotel |    601 | double | 29.00 | Joe Keogh    |
+| The Tower Hotel |    601 | double | 29.00 | Carol Farrel |
+| The Tower Hotel |    701 | family | 39.00 | John Kay     |
+| The Tower Hotel |    701 | family | 39.00 | John Kay     |
+| The Tower Hotel |    701 | family | 39.00 | Mike Ritchie |
+| The Tower Hotel |    701 | family | 39.00 | Joe Keogh    |
+| The Tower Hotel |    701 | family | 39.00 | Carol Farrel |
++-----------------+--------+--------+-------+--------------+
+10) select hotel.hotelname,booking.roomno,booking.guestno, guest.guestname from hotel join booking on hotel.hotelno = booking.hotelno join guest on booking.guestno = guest.guestno where hotelname = "The Tower Hotel";
++-----------------+--------+---------+--------------+
+| hotelname       | roomno | guestno | guestname    |
++-----------------+--------+---------+--------------+
+| The Tower Hotel |    501 |   10001 | John Kay     |
+| The Tower Hotel |    701 |   10001 | John Kay     |
+| The Tower Hotel |    601 |   10002 | Mike Ritchie |
+| The Tower Hotel |    601 |   10004 | Joe Keogh    |
+| The Tower Hotel |    501 |   10005 | Carol Farrel |
++-----------------+--------+---------+--------------+
+==> onvolledig, room details => select * from select()
+11) select hotelname, sum(price)  from booking join hotel on booking.hotelno = hotel.hotelno join room on booking.roomno = room.roomno where hotelname = "The Tower Hotel" and datefrom = "2004-04-01";
++-----------------+------------+
+| hotelname       | sum(price) |
++-----------------+------------+
+| The Tower Hotel |      19.00 |
++-----------------+------------+
+
+tussenstap:De prijs van elke boeking bij the tower hotel
+select hotelname, price  from booking join hotel on booking.hotelno = hotel.hotelno join room on booking.roomno = room.roomno where hotelname = "The Tower Hotel";
++-----------------+-------+
+| hotelname       | price |
++-----------------+-------+
+| The Tower Hotel | 19.00 |
+| The Tower Hotel | 10.00 |
+| The Tower Hotel | 39.00 |
+| The Tower Hotel | 29.00 |
+| The Tower Hotel | 29.00 |
+| The Tower Hotel | 19.00 |
++-----------------+-------+
+mysql> select hotelname, sum(price)  from booking join hotel on booking.hotelno = hotel.hotelno join room on booking.roomno = room.roomno where hotelname = "The Tower Hotel";
++-----------------+------------+
+| hotelname       | sum(price) |
++-----------------+------------+
+| The Tower Hotel |     145.00 |
++-----------------+------------+
+==> datum toevoegen
+select hotelname, sum(price)  from booking join hotel on booking.hotelno = hotel.hotelno join room on booking.roomno = room.roomno where hotelname = "The Tower Hotel" and datefrom = "2004-04-01";
++-----------------+------------+
+| hotelname       | sum(price) |
++-----------------+------------+
+| The Tower Hotel |      19.00 |
++-----------------+------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
