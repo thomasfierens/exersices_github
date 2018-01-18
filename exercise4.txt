@@ -1,0 +1,162 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Doctor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Doctor` (
+  `idDoctor` INT NOT NULL,
+  `doc_Name` VARCHAR(45) NULL,
+  `doc_Date_of_birth` DATE NULL,
+  `doc_Address` VARCHAR(45) NULL,
+  `doc_Phone_number` VARCHAR(45) NULL,
+  `Salary` INT NULL,
+  PRIMARY KEY (`idDoctor`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Medical`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Medical` (
+  `idMedical` INT NOT NULL,
+  `Overtime_rate` VARCHAR(45) NULL,
+  `idDoctor` INT NULL,
+  PRIMARY KEY (`idMedical`),
+  INDEX `fk_Medical_1_idx` (`idDoctor` ASC),
+  CONSTRAINT `fk_Medical_1`
+    FOREIGN KEY (`idDoctor`)
+    REFERENCES `mydb`.`Doctor` (`idDoctor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Specialist`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Specialist` (
+  `idSpecialist` INT NOT NULL,
+  `Field_area` VARCHAR(45) NULL,
+  `idDoctor` INT NULL,
+  PRIMARY KEY (`idSpecialist`),
+  INDEX `fk_Specialist_1_idx` (`idDoctor` ASC),
+  CONSTRAINT `fk_Specialist_1`
+    FOREIGN KEY (`idDoctor`)
+    REFERENCES `mydb`.`Doctor` (`idDoctor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Patient`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Patient` (
+  `idPatient` INT NOT NULL,
+  `pat_Name` VARCHAR(45) NULL,
+  `pat_Address` VARCHAR(45) NULL,
+  `pat_Phone_number` VARCHAR(45) NULL,
+  PRIMARY KEY (`idPatient`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Appointment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Appointment` (
+  `idAppointment` INT NOT NULL,
+  `Date` DATE NULL,
+  `Time` VARCHAR(45) NULL,
+  `idPatient` INT NULL,
+  `idDoctor` INT NULL,
+  PRIMARY KEY (`idAppointment`),
+  INDEX `fk_Appointment_1_idx` (`idPatient` ASC),
+  INDEX `fk_Appointment_2_idx` (`idDoctor` ASC),
+  CONSTRAINT `fk_Appointment_1`
+    FOREIGN KEY (`idPatient`)
+    REFERENCES `mydb`.`Patient` (`idPatient`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Appointment_2`
+    FOREIGN KEY (`idDoctor`)
+    REFERENCES `mydb`.`Doctor` (`idDoctor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Payment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Payment` (
+  `idPayment` INT NOT NULL,
+  `Details` VARCHAR(45) NULL,
+  `Method` VARCHAR(45) NULL,
+  `idPatient` INT NULL,
+  PRIMARY KEY (`idPayment`),
+  INDEX `fk_Payment_1_idx` (`idPatient` ASC),
+  CONSTRAINT `fk_Payment_1`
+    FOREIGN KEY (`idPatient`)
+    REFERENCES `mydb`.`Patient` (`idPatient`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Bill`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Bill` (
+  `idBill` INT NOT NULL,
+  `Total` INT NULL,
+  `idDoctor` INT NULL,
+  PRIMARY KEY (`idBill`),
+  INDEX `fk_Bill_1_idx` (`idDoctor` ASC),
+  CONSTRAINT `fk_Bill_1`
+    FOREIGN KEY (`idDoctor`)
+    REFERENCES `mydb`.`Doctor` (`idDoctor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Payment_bill`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Payment_bill` (
+  `idPayment_bill` INT NOT NULL,
+  `idPayment` INT NULL,
+  `idBill` INT NULL,
+  PRIMARY KEY (`idPayment_bill`),
+  INDEX `fk_Payment_bill_1_idx` (`idPayment` ASC),
+  INDEX `fk_Payment_bill_2_idx` (`idBill` ASC),
+  CONSTRAINT `fk_Payment_bill_1`
+    FOREIGN KEY (`idPayment`)
+    REFERENCES `mydb`.`Payment` (`idPayment`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Payment_bill_2`
+    FOREIGN KEY (`idBill`)
+    REFERENCES `mydb`.`Bill` (`idBill`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
